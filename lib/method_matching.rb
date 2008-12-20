@@ -1,6 +1,7 @@
 $:.unshift File.dirname(__FILE__)
 require 'ext/instance_exec'
 require 'method_matching/extendable_block'
+require 'method_matching/pattern_matching'
 
 module Kernel
   def method_matching(regex, &definition)
