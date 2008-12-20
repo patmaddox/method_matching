@@ -8,6 +8,14 @@ describe "MethodMatching" do
       end
     }.new.foo_bar(1, "two").should == [:foo_bar, 1, "two"]
   end
+  
+  it "should take care of respond_to?" do
+    o = Class.new { 
+      method_matching(/^foo_(.*)$/) { |mn, *args| mn }
+    }.new
+    o.should respond_to(:foo_bar)
+    o.should_not respond_to(:chicken!)
+  end
 
   it "should handle two method matchers" do
     klass = Class.new do

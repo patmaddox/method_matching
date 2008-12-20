@@ -28,7 +28,13 @@ module Kernel
       self.class.method_matchers.each { |m, mdef| try_matcher.call(m, mdef) }
       super
     end
+
+    def respond_to?(method_name)
+      (method_matchers.keys +
+       self.class.method_matchers.keys).each do |matcher|
+        return true if method_name.to_s =~ matcher
+      end
+      super
+    end
   end
 end
-
-#Module.send :include, MethodMatching
