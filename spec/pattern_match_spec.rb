@@ -5,6 +5,10 @@ describe "pattern_match" do
     Class.new(&block).new
   end
 
+  def not_pattern_match
+    raise_error(/No pattern matching/)
+  end
+
   it "should call the method when pattern is matched" do
     o { pattern_match(:foo, Integer) { :integer } }.
       foo(123).should == :integer
@@ -19,12 +23,19 @@ describe "pattern_match" do
   it "should raise a nice error when not matched & no args given" do
     lambda { o { pattern_match(:foo, Integer) { :integer } }.
       foo }.
-      should raise_error(/No pattern matching \(no args given\)/)    
+      should not_pattern_match
+  end
+
+  it "should match no args" do
+    object = o { pattern_match(:foo) { :matched } }
+    object.foo.should == :matched
+    lambda { object.foo(123) }.should not_pattern_match
   end
   
   it "should match literals" do
-    o { pattern_match(:foo, "asdf") { :matched } }.
-      foo("asdf").should == :matched
+    object = o { pattern_match(:foo, "asdf") { :matched } }
+    object.foo("asdf").should == :matched
+    lambda { object.foo("asdfbar") }.should not_pattern_match
   end
 
   it "should match superclasses" do
