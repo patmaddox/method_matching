@@ -1,3 +1,5 @@
+# Ganked from ActiveSupport, found in 
+# http://www.ruby-forum.com/topic/72172
 class Object
   unless defined? instance_exec # 1.9
     def instance_exec(*arguments, &block)
