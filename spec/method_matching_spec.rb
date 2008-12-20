@@ -104,4 +104,16 @@ describe "MethodMatching" do
       @klass.new.foo_bar.should == :foo_bar
     end
   end
+
+  it "should not mix up two classes" do
+    @klass1 = Class.new do
+      method_matching(/^foo_(.*)$/) { |mn, *args| :klass1 }
+    end
+    @klass2 = Class.new do
+      method_matching(/^foo_(.*)$/) { |mn, *args| :klass2 }
+    end
+
+    @klass1.new.foo_bar.should == :klass1
+    @klass2.new.foo_bar.should == :klass2
+  end
 end
