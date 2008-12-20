@@ -1,5 +1,4 @@
 require 'rubygems'
-require 'bacon'
-
-# get a summary of errors raised and such
-Bacon.summary_on_exit
+require 'spec'
+this_dir = File.expand_path(File.dirname(__FILE__))
+require this_dir + '/../lib/method_matching.rb'
