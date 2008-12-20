@@ -37,6 +37,14 @@ describe "MethodMatching" do
     klass.new.foo_bar { :foo }.should be_true
   end
 
+  describe "on instances" do
+    it "should work with instances" do
+      o = Object.new
+      o.method_matching(/^foo_(.*)$/) { |mn, *args| mn }
+      o.foo_bar.should == :foo_bar
+    end
+  end
+
   it "should not screw with an existing method_missing" do
     klass = Class.new do
       def method_missing(method_name, *args, &block)
