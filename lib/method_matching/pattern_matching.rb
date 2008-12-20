@@ -1,10 +1,13 @@
 module Kernel
   def pattern_match(name, *patterns, &definition)
-    pattern_matchers << Pattern.new(patterns, definition)
+    pattern_matchers << MethodMatching::PatternMatcher.new(patterns, definition)
     mdef = <<-END
-      def #{name}(*args)
+      def #{name}(*args, &block)
         self.class.pattern_matchers.each do |p|
-          return p.execute if p =~ args
+          if p =~ args
+            p.definition.block = block
+            return p.definition.call(*args) 
+          end
         end
     
         arg_inspect = args.map { |a| a.inspect }.join(', ')
@@ -17,11 +20,15 @@ module Kernel
   def pattern_matchers
     @pattern_matchers ||= []
   end
+end
 
-  class Pattern
+module MethodMatching
+  class PatternMatcher
+    attr_reader :definition
+
     def initialize(patterns, definition)
       @patterns = patterns
-      @definition = definition
+      @definition = ExtendableBlock.new(&definition)
     end
 
     def =~(args)
@@ -29,10 +36,6 @@ module Kernel
         return false unless p === args[i]
       end
       true
-    end
-
-    def execute
-      @definition.call
     end
   end
 end

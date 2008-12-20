@@ -15,4 +15,15 @@ describe "pattern_match" do
       foo("uh", "oh") }.
       should raise_error(/No pattern matching "uh", "oh"/)
   end
+
+  it "should handle blocks" do
+    o { pattern_match(:foo, Integer) { block.call } }.
+      foo(123) { :hello! }.should == :hello!
+  end
+
+  it "should know about block_given?" do
+    object = o { pattern_match(:foo, Integer) { block_given? } }
+    object.foo(123).should be_false
+    object.foo(123) { :hello }.should be_true
+  end
 end
