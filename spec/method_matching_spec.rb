@@ -22,6 +22,21 @@ describe "MethodMatching" do
     klass.new.baz_chicken.should == :baz_chicken
   end
 
+  it "should pass in the block if it's given" do
+    klass = Class.new do
+      method_matching(/^foo_(.*)$/) { |mn, *args| block.call }
+    end
+    klass.new.foo_bar { "from block" }.should == "from block"
+  end
+
+  it "should let the definition know about block_given?" do
+    klass = Class.new do
+      method_matching(/^foo_(.*)$/) { |mn, *args| block_given? }
+    end
+    klass.new.foo_bar.should be_false
+    klass.new.foo_bar { :foo }.should be_true
+  end
+
   it "should not screw with an existing method_missing" do
     klass = Class.new do
       def method_missing(method_name, *args, &block)
