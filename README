@@ -1,9 +1,43 @@
 method_matching
 ===============
 
-Description goes here.
+This is some crazy cool method_missing stuff where you define your
+method_missing junk in pieces.  So instead of
+
+  def method_missing(m, *args, &block)
+    if m.to_s =~ /^foo_/
+      :foo
+    elsif m.to_s =~ /^bar_/
+      :bar
+    elsif m.to_s =~ /^baz_/
+      :baz
+    end
+  end
+
+you can do
+
+  method_matching(/^foo_/) { |m| :foo }
+  method_matching(/^bar_/) { |m| :bar }
+  method_matching(/^baz_/) { |m| :baz }
+
+Short methods and single responsibility principle FTW!!
+
+But wait! There's more!
+
+  method_matching(/magic/) do |m, a, b|
+    if block_given?
+      block.call(a, b)
+    else
+      "You passed in (#{a}, #{b})"
+    end
+  end
+
+  mr_magic(1,2)  # => "You passed in (1, 2)
+  mr_magic(1,2) {|x,y| x+y}  # => 3
+
+Holy awesome blocks like I'm used to, batman!
 
 COPYRIGHT
 =========
 
-Copyright (c) 2008 Pat Maddox. See LICENSE for details.
+Copyright (c) 2008 Pat Maddox. MIT License (See LICENSE for details)
