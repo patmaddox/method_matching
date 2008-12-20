@@ -1,4 +1,4 @@
-module MethodMatching
+class Module
   def method_matching(regex, &definition)
     method_matchers[regex] = definition
     include MethodMissingDefinition unless included_modules.include?(MethodMissingDefinition)
@@ -19,5 +19,3 @@ module MethodMatching
     end
   end
 end
-
-Module.send :include, MethodMatching

@@ -49,4 +49,36 @@ describe "MethodMatching" do
     klass.new.from_mm.should == :caught
     klass.new.foo_bar.should == :foo_bar
   end
+
+  describe "integration with method_missing defined in modules" do
+    before(:each) do
+      @klass = Class.new
+      @module = Module.new do
+        def method_missing(method_name, *args, &block)
+          return :caught if method_name == :from_mm
+          super
+        end      
+      end
+    end
+
+    it "should work with method_missing module mixed in before" do
+      @klass.send :include, @module
+      @klass.class_eval do
+        method_matching(/^foo_(.*)$/) { |mn, *args| mn }
+      end
+
+      @klass.new.from_mm.should == :caught
+      @klass.new.foo_bar.should == :foo_bar
+    end
+
+    it "should work with method_missing module mixed in after" do
+      @klass.class_eval do
+        method_matching(/^foo_(.*)$/) { |mn, *args| mn }
+      end
+      @klass.send :include, @module
+
+      @klass.new.from_mm.should == :caught
+      @klass.new.foo_bar.should == :foo_bar
+    end
+  end
 end
