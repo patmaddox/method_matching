@@ -10,7 +10,11 @@ module Kernel
           end
         end
     
-        arg_inspect = args.map { |a| a.inspect }.join(', ')
+        arg_inspect = if args.empty?
+          '(no args given)'
+        else
+          args.map { |a| a.inspect }.join(', ')
+        end
         raise "No pattern matching #\{arg_inspect\}"
       end
     END
