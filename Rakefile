@@ -17,10 +17,23 @@ rescue LoadError
   puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
 end
 
-Rake::TestTask.new do |t|
-  t.libs << 'lib'
-  t.pattern = 'spec/**/*_spec.rb'
-  t.verbose = false
+begin
+  require 'spec/rake/spectask'
+
+  desc "Run the spec suite"
+  Spec::Rake::SpecTask.new do |t|
+    t.spec_files = FileList['spec/**/*_spec.rb']
+  end
+
+rescue LoadError
+  at_exit do
+    puts <<-EOS
+
+****************************************************
+To use rspec for testing you must install rspec gem:
+    gem install rspec
+EOS
+  end
 end
 
 Rake::RDocTask.new do |rdoc|
