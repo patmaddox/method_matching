@@ -1,6 +1,6 @@
 module MethodMatching
   class ExtendableBlock
-    attr_accessor :block
+    attr_writer :block
     
     def initialize(&definition)
       @definition = definition
@@ -8,6 +8,10 @@ module MethodMatching
     
     def call(*args)
       instance_exec(*args, &@definition)
+    end
+
+    def block
+      block_given?? @block : raise("No block given")
     end
 
     def block_given?
