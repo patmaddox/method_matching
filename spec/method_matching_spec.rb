@@ -8,9 +8,9 @@ describe "MethodMatching" do
       end
     }.new.foo_bar(1, "two").should == [:foo_bar, 1, "two"]
   end
-  
+
   it "should take care of respond_to?" do
-    o = Class.new { 
+    o = Class.new {
       method_matching(/^foo_(.*)$/) { |mn, *args| mn }
     }.new
     o.should respond_to(:foo_bar)
@@ -88,7 +88,7 @@ describe "MethodMatching" do
         def method_missing(method_name, *args, &block)
           return :caught if method_name == :from_mm
           super
-        end      
+        end
       end
     end
 
@@ -123,5 +123,19 @@ describe "MethodMatching" do
 
     @klass1.new.foo_bar.should == :klass1
     @klass2.new.foo_bar.should == :klass2
+  end
+
+  describe "defined in a module" do
+    before(:each) do
+      @mod = Module.new do
+        method_matching(/^mod_(.*)$/) { |mn, *args| :from_module }
+      end
+      @klass = Class.new
+    end
+
+    it "should work" do
+      @klass.send :include, @mod
+      @klass.new.mod_method.should == :from_module
+    end
   end
 end
