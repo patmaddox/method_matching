@@ -20,6 +20,11 @@ describe "pattern_match" do
       should raise_error(/No pattern matching "uh", "oh"/)
   end
 
+  it "should handle multiple patterns" do
+    o { pattern_match(:foo, Numeric, /asdf/) { :matched } }.
+      foo(123, "FOOasdfBAR").should == :matched
+  end
+
   it "should raise a nice error when not matched & no args given" do
     lambda { o { pattern_match(:foo, Integer) { :integer } }.
       foo }.
@@ -31,7 +36,7 @@ describe "pattern_match" do
     object.foo.should == :matched
     lambda { object.foo(123) }.should not_pattern_match
   end
-  
+
   it "should match literals" do
     object = o { pattern_match(:foo, "asdf") { :matched } }
     object.foo("asdf").should == :matched
