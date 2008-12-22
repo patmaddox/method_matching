@@ -38,9 +38,10 @@ describe "pattern_match" do
   end
 
   it "should match literals" do
-    object = o { pattern_match(:foo, "asdf") { :matched } }
-    object.foo("asdf").should == :matched
-    lambda { object.foo("asdfbar") }.should not_pattern_match
+    o { pattern_match(:foo, "asdf") { :matched } }.
+      foo("asdf").should == :matched
+    lambda { o { pattern_match(:foo, "asdf") { :matched } }.foo }.
+      should not_pattern_match
   end
 
   it "should match superclasses" do
@@ -54,8 +55,9 @@ describe "pattern_match" do
   end
 
   it "should know about block_given?" do
-    object = o { pattern_match(:foo, Integer) { block_given? } }
-    object.foo(123).should be_false
-    object.foo(123) { :hello }.should be_true
+    o { pattern_match(:foo, Integer) { block_given? } }.
+      foo(123).should be_false
+    o { pattern_match(:foo, Integer) { block_given? } }.
+      foo(123) { :hello }.should be_true
   end
 end

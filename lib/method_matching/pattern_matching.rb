@@ -7,20 +7,19 @@ module Kernel
         self.class.pattern_matchers.each do |p|
           if p =~ args
             p.definition.block = block
-            return p.definition.call(*args) 
+            return p.definition.call(*args)
           end
         end
-    
-        arg_inspect = if args.empty?
+
+        raise 'No pattern matching ' + if args.empty?
           '(no args given)'
         else
           args.map { |a| a.inspect }.join(', ')
         end
-        raise "No pattern matching #\{arg_inspect\}"
       end
     END
     class_eval mdef
-  end  
+  end
 
   def pattern_matchers
     @pattern_matchers ||= []
